@@ -1,8 +1,6 @@
-using System;
-
 namespace TicTacToe.Models;
 
-public class CreateGameResponse
+public record CreateGameResponse
 {
-    public Guid GameId { get; set; }
+    public string GameId { get; set; }
 }

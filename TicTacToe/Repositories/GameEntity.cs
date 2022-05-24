@@ -1,9 +1,8 @@
-using System;
-
 namespace TicTacToe.Repositories;
 
-public class GameEntity
+public record GameEntity
 {
     public int Id { get; set; }
-    public Guid GameId { get; set; }
+    public string GameId { get; set; }
+    public string Board { get; set; }
 }

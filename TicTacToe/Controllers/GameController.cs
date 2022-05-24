@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 using TicTacToe.Models;
-using TicTacToe.Repositories;
+using TicTacToe.Services;
 
 namespace TicTacToe.Controllers;
 
@@ -11,22 +10,26 @@ namespace TicTacToe.Controllers;
 [ApiController]
 public class GameController : ControllerBase
 {
-    private readonly IGameRepository _gameRepository;
+    private readonly IGameService _gameService;
 
-    public GameController(IGameRepository gameRepository)
+    public GameController(IGameService gameService)
     {
-        _gameRepository = gameRepository;
+        _gameService = gameService;
     }
 
     // POST /game/create
     [HttpPost("create")]
-    public async Task<ActionResult<Guid>> CreateGame()
+    public async Task<ActionResult<CreateGameResponse>> CreateGame()
     {
-        var gameId = await _gameRepository.CreateGame();
-        var response = new CreateGameResponse
-        {
-            GameId = gameId
-        };
+        var response = await _gameService.CreateGame();
+        return Ok(response);
+    }
+
+    // GET /game/{gameId}
+    [HttpGet("{gameId}")]
+    public async Task<ActionResult<Game>> CreateGame([FromRoute] string gameId)
+    {
+        var response = await _gameService.GetGame(gameId);
         return Ok(response);
     }
 }

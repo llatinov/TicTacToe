@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -6,12 +5,19 @@ namespace TicTacToe.Repositories;
 
 public class GameRepository : IGameRepository
 {
-    private static readonly ConcurrentDictionary<Guid, GameEntity> GameTable = new();
+    private static readonly ConcurrentDictionary<string, GameEntity> GameTable = new();
 
-    public Task<Guid> CreateGame()
+    public Task CreateGame(GameEntity gameEntity)
     {
-        var gameId = Guid.NewGuid();
-        GameTable.TryAdd(gameId, new GameEntity());
-        return Task.FromResult(gameId);
+        GameTable.TryAdd(gameEntity.GameId, gameEntity);
+        // TODO: Switch to EntityFramework async
+        return Task.CompletedTask;
+    }
+
+    public Task<GameEntity> GetGame(string gameId)
+    {
+        GameTable.TryGetValue(gameId, out var value);
+        // TODO: Switch to EntityFramework async
+        return Task.FromResult(value);
     }
 }

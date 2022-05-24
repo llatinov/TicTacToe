@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TicTacToe.Repositories;
+using TicTacToe.Services;
 
 namespace TicTacToe;
 
@@ -21,7 +22,8 @@ public class Startup
             .AddMvcOptions(o => o.EnableEndpointRouting = false)
             .AddNewtonsoftJson(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
-        services.AddTransient<IGameRepository, GameRepository>();
+        services.AddScoped<IGameRepository, GameRepository>();
+        services.AddScoped<IGameService, GameService>();
     }
 
     public void Configure(IApplicationBuilder app)
