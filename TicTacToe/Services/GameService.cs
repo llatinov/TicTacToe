@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using TicTacToe.Mappers;
 using TicTacToe.Models;
 using TicTacToe.Repositories;
 
@@ -17,16 +18,17 @@ public class GameService : IGameService
 
     public async Task<CreateGameResponse> CreateGame()
     {
-        var gameId = Guid.NewGuid().ToString();
         var gameEntity = new GameEntity
         {
-            GameId = gameId,
-            Board = JsonConvert.SerializeObject(GenerateEmptyBoard())
+            GameId = Guid.NewGuid().ToString(),
+            Board = JsonConvert.SerializeObject(GenerateEmptyBoard()),
+            PlayedMoves = 0,
+            NextMove = GamePlayer.X
         };
         await _gameRepository.CreateGame(gameEntity);
         var response = new CreateGameResponse
         {
-            GameId = gameId
+            GameId = gameEntity.GameId
         };
         return response;
     }
@@ -34,11 +36,20 @@ public class GameService : IGameService
     public async Task<Game> GetGame(string gameId)
     {
         var gameEntity = await _gameRepository.GetGame(gameId);
-        var game = new Game
-        {
-            GameId = gameEntity.GameId,
-            Board = JsonConvert.DeserializeObject<string[][]>(gameEntity.Board)
-        };
+        if (gameEntity == null)
+            return null;
+        var game = gameEntity.ToGame();
+        return game;
+    }
+
+    public async Task<Game> UpdateGame(Game game, PlayMoveRequest playMoveRequest)
+    {
+        game.PlayedMoves++;
+        game.NextMove = GamePlayer.GetNextPlayer(playMoveRequest.Player);
+        game.Board[playMoveRequest.Position.Row][playMoveRequest.Position.Column] = playMoveRequest.Player;
+
+        var gameEntity = game.ToGameEntity();
+        await _gameRepository.UpdateGame(gameEntity);
         return game;
     }
 

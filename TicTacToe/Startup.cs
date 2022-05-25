@@ -24,6 +24,7 @@ public class Startup
 
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IGameService, GameService>();
+        services.AddScoped<IGameValidator, GameValidator>();
     }
 
     public void Configure(IApplicationBuilder app)

@@ -20,4 +20,12 @@ public class GameRepository : IGameRepository
         // TODO: Switch to EntityFramework async
         return Task.FromResult(value);
     }
+
+    public Task UpdateGame(GameEntity gameEntity)
+    {
+        GameTable.TryRemove(gameEntity.GameId, out _);
+        GameTable.TryAdd(gameEntity.GameId, gameEntity);
+        // TODO: Switch to EntityFramework async
+        return Task.CompletedTask;
+    }
 }

@@ -6,26 +6,22 @@ namespace TicTacToe.Models;
 public record Game
 {
     public string GameId { get; set; }
-
     public string[][] Board { get; set; }
-
-    public int PlayedMoves => GetPlayedMoves();
-
+    public int PlayedMoves { get; set; }
+    public string NextMove { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public GameStatus GameStatus
     {
         get
         {
-            var playedMoves = PlayedMoves;
-            if (playedMoves % 2 == 0)
+            if (PlayedMoves % 2 == 0)
             {
                 return IsWinner(GamePlayer.O) ? GameStatus.WinnerO : GameStatus.Active;
             }
             else
             {
-                return IsWinner(GamePlayer.X) ?
-                    GameStatus.WinnerX :
-                    playedMoves == 9 ? GameStatus.Draw : GameStatus.Active;
+                return IsWinner(GamePlayer.X) ? GameStatus.WinnerX :
+                    PlayedMoves == 9 ? GameStatus.Draw : GameStatus.Active;
             }
         }
     }
@@ -40,21 +36,5 @@ public record Game
             Board[0][2] == player && Board[1][2] == player && Board[2][2] == player ||
             Board[0][0] == player && Board[1][1] == player && Board[2][2] == player ||
             Board[2][0] == player && Board[1][1] == player && Board[0][2] == player;
-    }
-
-    private int GetPlayedMoves()
-    {
-        var result = 0;
-        foreach (var line in Board)
-        {
-            foreach (var cell in line)
-            {
-                if (cell == GamePlayer.X || cell == GamePlayer.O)
-                {
-                    result++;
-                };
-            }
-        }
-        return result;
     }
 }
